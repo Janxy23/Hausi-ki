@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI STUDY | Anonymes Hausaufgaben-System</title>
+    <title>AI STUDY | 24/7 Hausaufgaben-System</title>
     <script src="https://tailwindcss.com"></script>
     <script src="https://jsdelivr.net"></script>
     <style>
@@ -11,19 +11,55 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #05070a; color: #e2e8f0; }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .ai-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-        .loading-bar { width: 0%; height: 2px; background: #3b82f6; transition: width 0.3s; position: absolute; top: 0; left: 0; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col pb-32">
 
-    <!-- A-ADS STICKY UNIT -->
-    <div id="ad-wrapper" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; display: flex; justify-content: center;">
+    <!-- HEADER -->
+    <nav class="p-5 flex justify-between items-center glass sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-extrabold text-white ai-glow">Σ</div>
+            <h1 class="font-bold text-lg tracking-tight">AI<span class="text-blue-500 italic">STUDY</span></h1>
+        </div>
+        <div id="user-status" class="px-3 py-1 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 uppercase">Free Mode</div>
+    </nav>
+
+    <!-- CHAT BEREICH -->
+    <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl mx-auto w-full">
+        <div class="glass p-5 rounded-2xl rounded-tl-none max-w-[90%] shadow-2xl text-sm border-l-4 border-blue-600">
+            <p>System bereit. Lade ein Bild deiner Hausaufgabe hoch oder frage mich etwas.<br><br>
+            <span class="text-blue-400 font-bold">PowerPoint nötig?</span> Schreib einfach "PowerPoint zu Thema X".</p>
+            <button onclick="shareLink()" class="mt-3 text-xs bg-blue-600/20 text-blue-400 px-3 py-1 rounded-md border border-blue-600/30">Link teilen für Premium (3 Tage)</button>
+        </div>
+    </div>
+
+    <!-- INPUT BEREICH -->
+    <div class="fixed bottom-[100px] left-0 right-0 p-4 z-40 bg-gradient-to-t from-[#05070a] via-[#05070a] to-transparent">
+        <div class="max-w-3xl mx-auto glass rounded-2xl p-2 ai-glow">
+            <div class="flex items-center gap-2">
+                <label class="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-700 transition">
+                    <span id="clip-icon" class="text-xl text-blue-400">+</span>
+                    <input type="file" id="img-in" class="hidden" accept="image/*" onchange="previewImg()">
+                </label>
+                <input type="text" id="user-msg" placeholder="Warte auf Timer (30s)..." disabled 
+                    class="flex-1 bg-transparent border-none px-3 outline-none text-sm disabled:opacity-30">
+                <button id="send-btn" onclick="handleAction()" disabled 
+                    class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center disabled:opacity-20 transition">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+            <p id="timer-text" class="text-center text-[9px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Ad-Processing: 30s</p>
+        </div>
+    </div>
+
+    <!-- DEIN A-ADS CODE -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 99999; display: flex; justify-content: center;">
         <input autocomplete="off" type="checkbox" id="aadsstickymojbiylo" hidden />
         <div style="padding-bottom: 90px; width: 728px; position: relative;">
             <div style="width:728px;height:90px;text-align:center;font-size:0;margin:auto">
-                <label for="aadsstickymojbiylo" style="top: -24px; right: 0; position: absolute; border-radius: 4px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.1); padding: 4px; z-index: 99999; cursor:pointer">
+                <label for="aadsstickymojbiylo" style="top: -24px; right: 0; position: absolute; border-radius: 4px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.1); padding: 4px; cursor:pointer">
                     <svg fill="#ffffff" height="16px" width="16px" viewBox="0 0 490 490"><polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/></svg>
                 </label>
                 <div id="frame" style="width: 728px; margin: auto; z-index: 99998; height: auto">
@@ -31,145 +67,126 @@
                 </div>
             </div>
         </div>
-        <style> #aadsstickymojbiylo:checked + div { display: none; } </style>
     </div>
-
-    <!-- Header -->
-    <nav class="p-5 flex justify-between items-center glass sticky top-0 z-40">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-extrabold text-white ai-glow">Σ</div>
-            <div>
-                <h1 class="font-bold text-lg tracking-tight">AI<span class="text-blue-500 text-sm italic">STUDY</span></h1>
-                <p class="text-[9px] text-gray-500 font-semibold uppercase tracking-[0.2em]">Next-Gen Learning</p>
-            </div>
-        </div>
-        <div class="flex gap-3">
-            <button onclick="shareLink()" class="hidden md:block text-xs bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition border border-gray-700">Teilen für Premium</button>
-            <div id="user-status" class="px-3 py-2 rounded-lg text-[10px] font-bold uppercase bg-red-500/10 text-red-500 border border-red-500/20">Free Mode</div>
-        </div>
-    </nav>
-
-    <!-- Chat -->
-    <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl mx-auto w-full pb-32">
-        <div class="flex flex-col gap-2 animate-pulse">
-            <div class="glass p-5 rounded-2xl rounded-tl-none max-w-[90%] shadow-2xl">
-                <p class="text-sm leading-relaxed text-gray-300">System bereit. Senden Sie mir ein Foto oder eine Frage. <br><br><span class="text-blue-400 font-bold">Tipp:</span> Schreiben Sie "PowerPoint zu [Thema]", um Folien zu generieren.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Input -->
-    <div class="fixed bottom-[110px] left-0 right-0 p-4 z-40">
-        <div class="max-w-3xl mx-auto glass rounded-2xl p-2 ai-glow relative">
-            <div id="loader" class="loading-bar"></div>
-            <div class="flex items-center gap-2">
-                <label class="w-12 h-12 flex items-center justify-center bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-700 transition">
-                    <span class="text-xl text-blue-400">+</span>
-                    <input type="file" id="img-in" class="hidden" accept="image/*">
-                </label>
-                <input type="text" id="user-msg" placeholder="Warte auf Timer..." disabled
-                    class="flex-1 bg-transparent border-none px-3 py-2 outline-none text-sm disabled:text-gray-600">
-                <button id="send-btn" onclick="handleAction()" disabled
-                    class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center disabled:opacity-30 disabled:grayscale transition shadow-lg shadow-blue-900/40">
-                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                </button>
-            </div>
-        </div>
-        <p id="timer-text" class="text-center text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Werbung wird verarbeitet: 30s</p>
-    </div>
+    <style> #aadsstickymojbiylo:checked + div { display: none; } </style>
 
     <script>
-        const API_KEY = "DEIN_GEMINI_API_KEY"; // HIER DEIN KEY REIN
+        const API_KEY = "AIzaSyA_HZDWye5mSLBvgvrjbkBIoAbzJAt6rzo"; // <--- DEINEN GOOGLE GEMINI API KEY HIER REIN
         let seconds = 30;
+        let selectedBase64 = null;
         let isPremium = false;
 
         window.onload = () => {
-            checkPremium();
+            if(localStorage.getItem('study_prem')) {
+                isPremium = true;
+                document.getElementById('user-status').innerText = "Premium Mode";
+                document.getElementById('user-status').classList.replace('text-red-500', 'text-green-500');
+                seconds = 0;
+            }
+            checkRef();
             startTimer();
         };
 
-        function checkPremium() {
-            const prem = localStorage.getItem('study_premium');
-            if (prem && new Date(prem) > new Date()) {
-                isPremium = true;
-                document.getElementById('user-status').innerText = 'Premium Mode';
-                document.getElementById('user-status').className = 'px-3 py-2 rounded-lg text-[10px] font-bold uppercase bg-green-500/10 text-green-400 border border-green-500/20';
-                document.getElementById('ad-wrapper').style.display = 'none';
-                seconds = 0;
-            }
-        }
-
         function startTimer() {
-            if(isPremium) { finishTimer(); return; }
+            const btn = document.getElementById('send-btn');
+            const input = document.getElementById('user-msg');
             const tText = document.getElementById('timer-text');
             const interval = setInterval(() => {
-                seconds--;
-                tText.innerText = `Werbung wird verarbeitet: ${seconds}s`;
-                if(seconds <= 0) {
+                if(seconds > 0) {
+                    seconds--;
+                    tText.innerText = `Ad-Processing: ${seconds}s`;
+                } else {
                     clearInterval(interval);
-                    finishTimer();
+                    btn.disabled = false;
+                    input.disabled = false;
+                    input.placeholder = "Frag mich was...";
+                    tText.innerText = "System Bereit ✓";
                 }
             }, 1000);
         }
 
-        function finishTimer() {
-            document.getElementById('user-msg').disabled = false;
-            document.getElementById('user-msg').placeholder = "Frage oder PPT Thema...";
-            document.getElementById('send-btn').disabled = false;
-            document.getElementById('timer-text').innerText = "System Bereit ✓";
+        function previewImg() {
+            const file = document.getElementById('img-in').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                selectedBase64 = reader.result.split(',')[1];
+                document.getElementById('clip-icon').innerText = "✓";
+                document.getElementById('clip-icon').classList.replace('text-blue-400', 'text-green-400');
+            };
+            reader.readAsDataURL(file);
         }
 
         async function handleAction() {
             const msg = document.getElementById('user-msg').value;
-            if(!msg) return;
+            if(!msg && !selectedBase64) return;
 
-            addChat("User", msg);
+            addChat("User", msg || "Bild zur Analyse gesendet");
             document.getElementById('user-msg').value = "";
+            const botId = "bot-" + Date.now();
+            addChat("Bot", "KI analysiert...", botId);
 
             if(msg.toLowerCase().includes("powerpoint") || msg.toLowerCase().includes("ppt")) {
-                generatePPT(msg);
+                generatePPT(msg, botId);
             } else {
-                callGemini(msg);
+                callGemini(msg, botId);
             }
         }
 
-        async function callGemini(text) {
-            addChat("Bot", "KI analysiert... (API Key erforderlich)");
-            // Hier kommt der Fetch-Code zur Google API rein
+        async function callGemini(text, botId) {
+            try {
+                let parts = [{ text: "Löse diese Hausaufgabe ausführlich auf Deutsch: " + text }];
+                if(selectedBase64) {
+                    parts.push({ inline_data: { mime_type: "image/jpeg", data: selectedBase64 } });
+                }
+
+                const res = await fetch(`https://googleapis.com{API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: parts }] })
+                });
+                const data = await res.json();
+                const out = data.candidates[0].content.parts[0].text;
+                document.getElementById(botId).innerText = out;
+                
+                // Reset Image
+                selectedBase64 = null;
+                document.getElementById('clip-icon').innerText = "+";
+                document.getElementById('clip-icon').classList.replace('text-green-400', 'text-blue-400');
+            } catch (e) {
+                document.getElementById(botId).innerText = "Fehler: API Key ungültig oder Limit erreicht.";
+            }
         }
 
-        function generatePPT(topic) {
+        function generatePPT(topic, botId) {
             let pptx = new PptxGenJS();
             let slide = pptx.addSlide();
-            slide.background = { fill: "0f172a" };
-            slide.addText(topic.toUpperCase(), { x: 0.5, y: 1, w: "90%", fontSize: 36, color: "3b82f6", bold: true, align: 'center' });
-            slide.addText("Erstellt durch AI STUDY Systems", { x: 0.5, y: 3, w: "90%", fontSize: 14, color: "94a3b8", align: 'center' });
-            pptx.writeFile({ fileName: `Referat_${topic}.pptx` });
-            addChat("Bot", "✅ Deine PowerPoint wurde generiert und heruntergeladen.");
+            slide.background = { fill: "05070a" };
+            slide.addText(topic.toUpperCase(), { x: 0.5, y: 1, w: "90%", fontSize: 32, color: "3b82f6", align: "center", bold: true });
+            slide.addText("Generiert von AI STUDY Systems", { x: 0.5, y: 3, w: "90%", fontSize: 14, color: "94a3b8", align: "center" });
+            pptx.writeFile({ fileName: `Referat.pptx` });
+            document.getElementById(botId).innerText = "✅ PowerPoint wurde generiert und heruntergeladen!";
         }
 
-        function addChat(role, text) {
+        function addChat(role, text, id = "") {
             const container = document.getElementById('chat-container');
             const div = document.createElement('div');
             div.className = `flex flex-col ${role === 'User' ? 'items-end' : 'items-start'}`;
-            div.innerHTML = `<div class="${role === 'User' ? 'bg-blue-600' : 'glass'} p-4 rounded-2xl ${role === 'User' ? 'rounded-tr-none' : 'rounded-tl-none'} max-w-[85%] text-sm shadow-xl">${text}</div>`;
+            div.innerHTML = `<div id="${id}" class="${role === 'User' ? 'bg-blue-600 shadow-blue-900/20' : 'glass shadow-2xl'} p-4 rounded-2xl ${role === 'User' ? 'rounded-tr-none' : 'rounded-tl-none'} max-w-[85%] text-sm leading-relaxed">${text}</div>`;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
         }
 
         function shareLink() {
-            const url = window.location.origin + window.location.pathname + "?ref=" + Math.random().toString(36).substring(7);
+            const url = window.location.origin + window.location.pathname + "?ref=ai";
             navigator.clipboard.writeText(url);
-            alert("Empfehlungs-Link kopiert! 1 Klick auf den Link schaltet Premium für 3 Tage frei.");
+            alert("Link kopiert! Wenn jemand den Link öffnet, bekommst du 3 Tage Premium.");
         }
 
-        // Ref-Check für Premium
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.has('ref')) {
-            const exp = new Date();
-            exp.setDate(exp.getDate() + 3);
-            localStorage.setItem('study_premium', exp.toISOString());
-            window.location.href = window.location.pathname;
+        function checkRef() {
+            if(window.location.search.includes('ref=')) {
+                localStorage.setItem('study_prem', 'true');
+                window.location.href = window.location.pathname;
+            }
         }
     </script>
 </body>
